@@ -24,3 +24,20 @@ class TestMessagePack(unittest.TestCase):
             packed = Packer().pack(n)
             unpacked = Unpacker(packed).unpack()
             self.assertEqual(unpacked, n)
+
+    def test_float(self):
+        # Test regular float numbers
+        regular_cases = [0.0, 1.0, -1.0, 3.14, -0.12345]
+        for n in regular_cases:
+            packed = Packer().pack(n)
+            unpacked = Unpacker(packed).unpack()
+            self.assertAlmostEqual(unpacked, n, places=6)
+
+        # Test large numbers with relative tolerance
+        large_cases = [1e38, 1e39, -1e38]
+        for n in large_cases:
+            packed = Packer().pack(n)
+            unpacked = Unpacker(packed).unpack()
+            # Use relative tolerance for large numbers
+            self.assertTrue(abs((unpacked - n) / n) < 1e-6,
+                            f"Large float comparison failed: {unpacked} != {n}")

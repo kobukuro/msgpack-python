@@ -1,3 +1,6 @@
+import struct
+
+
 class Unpacker:
     def __init__(self, data):
         self.data = data
@@ -21,6 +24,15 @@ class Unpacker:
         # true (0xc3)
         elif byte == 0xc3:
             return True
+        # float 32,64 (0xca,0xcb)
+        elif byte == 0xca:
+            value = struct.unpack('>f', self.data[self.pos:self.pos + 4])[0]
+            self.pos += 4
+            return value
+        elif byte == 0xcb:
+            value = struct.unpack('>d', self.data[self.pos:self.pos + 8])[0]
+            self.pos += 8
+            return value
         # uint 8,16,32,64 (0xcc-0xcf)
         elif byte == 0xcc:
             value = self.data[self.pos]

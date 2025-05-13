@@ -6,7 +6,9 @@ class Packer:
             return bytes([0xc3]) if obj else bytes([0xc2])  # true/false
         elif isinstance(obj, int):
             return self._pack_int(obj)
-        return None
+        elif isinstance(obj, float):
+            return self._pack_float(obj)
+        raise TypeError(f"Unsupported type: {type(obj)}")
 
     def _pack_int(self, n):
         if n >= 0:
@@ -31,3 +33,9 @@ class Packer:
                 return bytes([0xd2]) + n.to_bytes(4, 'big', signed=True)  # int 32
             else:
                 return bytes([0xd3]) + n.to_bytes(8, 'big', signed=True)  # int 64
+
+    def _pack_float(self, n):
+        import struct
+        if abs(n) < 3.4028234663852886e+38:  # float 32 range
+            return bytes([0xca]) + struct.pack('>f', n)
+        return bytes([0xcb]) + struct.pack('>d', n)  # float 64

@@ -48,3 +48,10 @@ class TestMessagePack(unittest.TestCase):
             packed = Packer().pack(s)
             unpacked = Unpacker(packed).unpack()
             self.assertEqual(unpacked, s)
+
+    def test_binary(self):
+        test_cases = [b"", b"hello", bytes([x for x in range(256)])]
+        for b in test_cases:
+            packed = Packer().pack(b)
+            unpacked = Unpacker(packed).unpack()
+            self.assertEqual(unpacked, b)

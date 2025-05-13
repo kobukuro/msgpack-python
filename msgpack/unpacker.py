@@ -27,6 +27,19 @@ class Unpacker:
         # true (0xc3)
         elif byte == 0xc3:
             return True
+        # bin 8,16,32 (0xc4,0xc5,0xc6)
+        elif byte == 0xc4:
+            length = self.data[self.pos]
+            self.pos += 1
+            return self._read_bytes(length)
+        elif byte == 0xc5:
+            length = int.from_bytes(self.data[self.pos:self.pos + 2], 'big')
+            self.pos += 2
+            return self._read_bytes(length)
+        elif byte == 0xc6:
+            length = int.from_bytes(self.data[self.pos:self.pos + 4], 'big')
+            self.pos += 4
+            return self._read_bytes(length)
         # float 32,64 (0xca,0xcb)
         elif byte == 0xca:
             value = struct.unpack('>f', self.data[self.pos:self.pos + 4])[0]

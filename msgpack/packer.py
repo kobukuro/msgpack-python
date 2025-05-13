@@ -8,6 +8,8 @@ class Packer:
             return self._pack_int(obj)
         elif isinstance(obj, float):
             return self._pack_float(obj)
+        elif isinstance(obj, str):
+            return self._pack_str(obj)
         raise TypeError(f"Unsupported type: {type(obj)}")
 
     def _pack_int(self, n):
@@ -39,3 +41,14 @@ class Packer:
         if abs(n) < 3.4028234663852886e+38:  # float 32 range
             return bytes([0xca]) + struct.pack('>f', n)
         return bytes([0xcb]) + struct.pack('>d', n)  # float 64
+
+    def _pack_str(self, s):
+        data = s.encode('utf-8')
+        length = len(data)
+        if length <= 31:
+            return bytes([0xa0 | length]) + data  # fixstr
+        elif length <= 255:
+            return bytes([0xd9, length]) + data  # str 8
+        elif length <= 65535:
+            return bytes([0xda]) + length.to_bytes(2, 'big') + data  # str 16
+        return bytes([0xdb]) + length.to_bytes(4, 'big') + data  # str 32

@@ -41,3 +41,10 @@ class TestMessagePack(unittest.TestCase):
             # Use relative tolerance for large numbers
             self.assertTrue(abs((unpacked - n) / n) < 1e-6,
                             f"Large float comparison failed: {unpacked} != {n}")
+
+    def test_string(self):
+        test_cases = ["", "hello", "世界", "a" * 32, "a" * 256]
+        for s in test_cases:
+            packed = Packer().pack(s)
+            unpacked = Unpacker(packed).unpack()
+            self.assertEqual(unpacked, s)

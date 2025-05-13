@@ -15,6 +15,9 @@ class Unpacker:
         # positive fixint (0x00 - 0x7f)
         if byte <= 0x7f:
             return byte
+        # fixstr (0xa0 - 0xbf)
+        elif 0xa0 <= byte <= 0xbf:
+            return self._read_str(byte & 0x1f)
         # nil (0xc0)
         elif byte == 0xc0:
             return None
@@ -67,7 +70,29 @@ class Unpacker:
             value = int.from_bytes(self.data[self.pos:self.pos + 8], 'big', signed=True)
             self.pos += 8
             return value
+        # str 8,16,32 (0xd9-0xdb)
+        elif byte == 0xd9:
+            length = self.data[self.pos]
+            self.pos += 1
+            return self._read_str(length)
+        elif byte == 0xda:
+            length = int.from_bytes(self.data[self.pos:self.pos + 2], 'big')
+            self.pos += 2
+            return self._read_str(length)
+        elif byte == 0xdb:
+            length = int.from_bytes(self.data[self.pos:self.pos + 4], 'big')
+            self.pos += 4
+            return self._read_str(length)
         # negative fixint (0xe0-0xff)
         elif byte >= 0xe0:
             return byte - 0x100
         raise ValueError(f"Unknown type byte: {hex(byte)}")
+
+    def _read_str(self, length):
+        return self._read_bytes(length).decode('utf-8')
+
+    def _read_bytes(self, length):
+        end = self.pos + length
+        result = self.data[self.pos:end]
+        self.pos = end
+        return result

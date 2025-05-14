@@ -55,3 +55,16 @@ class TestMessagePack(unittest.TestCase):
             packed = Packer().pack(b)
             unpacked = Unpacker(packed).unpack()
             self.assertEqual(unpacked, b)
+
+    def test_array(self):
+        test_cases = [
+            [],
+            [1, 2, 3],
+            [1, "hello", True, None],
+            list(range(16)),  # test fixarray limit
+            list(range(65536))  # test array16 limit
+        ]
+        for arr in test_cases:
+            packed = Packer().pack(arr)
+            unpacked = Unpacker(packed).unpack()
+            self.assertEqual(unpacked, arr)

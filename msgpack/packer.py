@@ -12,6 +12,8 @@ class Packer:
             return self._pack_str(obj)
         elif isinstance(obj, bytes):
             return self._pack_bin(obj)
+        elif isinstance(obj, (list, tuple)):
+            return self._pack_array(obj)
         raise TypeError(f"Unsupported type: {type(obj)}")
 
     def _pack_int(self, n):
@@ -62,3 +64,13 @@ class Packer:
         elif length <= 65535:
             return bytes([0xc5]) + length.to_bytes(2, 'big') + b  # bin 16
         return bytes([0xc6]) + length.to_bytes(4, 'big') + b  # bin 32
+
+    def _pack_array(self, arr):
+        length = len(arr)
+        if length <= 15:
+            header = bytes([0x90 | length])  # fixarray
+        elif length <= 65535:
+            header = bytes([0xdc]) + length.to_bytes(2, 'big')  # array 16
+        else:
+            header = bytes([0xdd]) + length.to_bytes(4, 'big')  # array 32
+        return header + b''.join(self.pack(x) for x in arr)

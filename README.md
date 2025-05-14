@@ -35,8 +35,12 @@ The program can be used to encode JSON to MessagePack or decode MessagePack to J
 
 ### Encoding JSON to MessagePack
 #### Windows PowerShell
-``` bash
+``` powershell
 python main.py -e '{\"name\": \"John\", \"age\": 30}'
+```
+#### Linux
+``` bash
+python main.py -e '{"name": "John", "age": 30}'
 ```
 ### Decoding MessagePack to JSON
 ``` bash

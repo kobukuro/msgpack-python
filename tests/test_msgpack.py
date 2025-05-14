@@ -68,3 +68,16 @@ class TestMessagePack(unittest.TestCase):
             packed = Packer().pack(arr)
             unpacked = Unpacker(packed).unpack()
             self.assertEqual(unpacked, arr)
+
+    def test_map(self):
+        test_cases = [
+            {},
+            {"a": 1, "b": 2},
+            {"name": "John", "age": 30, "active": True},
+            {str(i): i for i in range(16)},  # test fixmap limit
+            {str(i): i for i in range(65536)}  # test map16 limit
+        ]
+        for d in test_cases:
+            packed = Packer().pack(d)
+            unpacked = Unpacker(packed).unpack()
+            self.assertEqual(unpacked, d)

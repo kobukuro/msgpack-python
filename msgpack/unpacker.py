@@ -15,6 +15,9 @@ class Unpacker:
         # positive fixint (0x00 - 0x7f)
         if byte <= 0x7f:
             return byte
+        # fixmap (0x80 - 0x8f)
+        elif 0x80 <= byte <= 0x8f:
+            return self._read_map(byte & 0x0f)
         # fixarray (0x90 - 0x9f)
         elif 0x90 <= byte <= 0x9f:
             return self._read_array(byte & 0x0f)
@@ -108,6 +111,15 @@ class Unpacker:
             length = int.from_bytes(self.data[self.pos:self.pos + 4], 'big')
             self.pos += 4
             return self._read_array(length)
+        # map 16,32 (0xde,0xdf)
+        elif byte == 0xde:
+            length = int.from_bytes(self.data[self.pos:self.pos + 2], 'big')
+            self.pos += 2
+            return self._read_map(length)
+        elif byte == 0xdf:
+            length = int.from_bytes(self.data[self.pos:self.pos + 4], 'big')
+            self.pos += 4
+            return self._read_map(length)
         # negative fixint (0xe0-0xff)
         elif byte >= 0xe0:
             return byte - 0x100
@@ -124,3 +136,6 @@ class Unpacker:
 
     def _read_array(self, length):
         return [self.unpack() for _ in range(length)]
+
+    def _read_map(self, length):
+        return {self.unpack(): self.unpack() for _ in range(length)}

@@ -45,7 +45,7 @@ python main.py -d 82a46e616d65a44a6f686ea36167651e
 ### Running Tests
 The project includes a comprehensive test suite. To run the tests:
 ``` bash
-python -m unittest tests/test_msgpack.py
+python -m unittest discover -s tests
 ```
 The test suite covers:
 - Nil values

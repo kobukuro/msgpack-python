@@ -18,7 +18,7 @@ A simple implementation of MessagePack serialization format in Python. This proj
 
 ## Download the Project
 
-Clone the repository:
+Clone the repository and navigate to the project directory:
 ```bash
 git clone https://github.com/kobukuro/msgpack-python.git
 cd msgpack-python

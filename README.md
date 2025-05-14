@@ -34,9 +34,8 @@ cd msgpack-python
 The program can be used to encode JSON to MessagePack or decode MessagePack to JSON from the command line.
 
 ### Encoding JSON to MessagePack
-
+#### Windows PowerShell
 ``` bash
-# Windows PowerShell
 python main.py -e '{\"name\": \"John\", \"age\": 30}'
 ```
 ### Decoding MessagePack to JSON
